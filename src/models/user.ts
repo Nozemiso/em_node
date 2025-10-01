@@ -15,7 +15,9 @@ export class User {
     @Column()
     name: string
 
-    @Column()
+    @Column({
+        unique: true
+    })
     @IsEmail()
     email: string
 
@@ -29,7 +31,9 @@ export class User {
     })
     role: UserRole
 
-    @Column()
+    @Column({
+        default: true
+    })
     isActive: boolean
 
 }

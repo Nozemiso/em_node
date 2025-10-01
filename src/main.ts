@@ -1,10 +1,13 @@
 import express from "express"
 import config from "./config";
 import usersRouter from "./routes/usersRouter";
-import { DataSource, Repository } from "typeorm";
+import { DataSource } from "typeorm";
 import { User } from "./models/user";
 import "reflect-metadata"
 import { UserRepository } from "./repositories/usersRepository";
+import { validateBody } from "./middlewares/validation";
+import { signinSchema } from "./schemas/authSchemas";
+import { signin } from "./controllers/usersController";
 
 const app = express()
 export let userRepository: UserRepository;
@@ -30,8 +33,9 @@ AppDataSource.initialize()
     console.log(err)
 })
 
+app.use(express.json())
 
-
+app.use('/signin', validateBody(signinSchema), signin)
 app.use('/users/', usersRouter)
 
 app.listen(config.port, (err) =>
@@ -39,5 +43,3 @@ app.listen(config.port, (err) =>
         ? console.error(`Error starting server: ${err}`)
         : console.log(`Server running at http://localhost:${config.port}`)
 );
-
-console.log(123);
