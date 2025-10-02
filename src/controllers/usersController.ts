@@ -2,7 +2,7 @@ import { Request, Response } from "express"
 import { userRepository } from "../main";
 import bcrypt from 'bcrypt'
 import jwt from "jsonwebtoken"
-import config from "../config";
+import { config } from "../config";
 
 export const createUser = async (req: Request, res: Response) => {
     const hashedPassword = bcrypt.hashSync(req.body.password, 1)
@@ -34,26 +34,24 @@ export const setUserStatus = (status: boolean) => async (req: Request, res: Resp
         if (!user) res.sendStatus(404)
         else return userRepository.setStatusById(id, status)
     }).then(() => {
-        res.sendStatus(204)
+        res.sendStatus(200)
     }).catch((err) => {
         res.status(500).send(err)
     })
 }
 
 export const signin = async (req: Request, res: Response) => {
-    const { email, password } = req.body
-    
+    const { email, password } = req.body   
     userRepository.getAuthInfo(email).then((result) => {
         if (!result || !result.isActive) res.sendStatus(404);
         else {
             if (bcrypt.compareSync(password, result.password)) {
                 const payload = {
-                    token: jwt.sign({ id: result.id }, config.jwt_secret, { expiresIn: "1d" })
+                    token: jwt.sign({ id: result.id }, config.jwt_secret as string, { expiresIn: "1d" })
                 }
-                console.log(payload)
                 res.status(200).send(payload)
             }
-            else res.sendStatus(403)
+            else res.sendStatus(401)
         }
     }).catch((err) => {
          res.status(500).send(err)

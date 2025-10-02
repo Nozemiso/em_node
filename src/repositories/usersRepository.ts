@@ -24,12 +24,9 @@ export class UserRepository {
     setStatusById = (userId: string, status: boolean) => {
         this.repository.update({ id: userId }, { isActive: status})
     }
-
-
-
     
     getAuthInfo = (email: string) => {
-        return this.repository.findOne({ where: { email }, select: { email: true, password: true, id: true}})
+        return this.repository.findOne({ where: { email }, select: { email: true, password: true, id: true, isActive: true}})
     }
 
 }

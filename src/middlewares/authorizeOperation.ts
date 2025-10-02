@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import z from "zod";
 import jwt, { JsonWebTokenError } from "jsonwebtoken"
-import config from "../config";
+import { config } from "../config";
 import { userRepository } from "../main";
 
 const token = z.jwt()
@@ -18,7 +18,7 @@ export const authorizeOperation = async (req: Request, res: Response, next: Next
     }
     let userId
     try {
-        userId = jwt.verify(tokenString, config.jwt_secret)
+        userId = jwt.verify(tokenString, config.jwt_secret as string)
     } catch (e) {
         if (e instanceof JsonWebTokenError) {
             res.sendStatus(401)
